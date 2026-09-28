@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: lanka-bank-modulith
+
+  datasource:
+    url: jdbc:h2:mem:bank;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      # Flyway owns the schema. Hibernate only checks that the mapping still fits.
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+    # Spring Modulith appends /<module>/ to this location and runs one pass per module.
+    # Shared, framework-owned migrations go in db/migration/__root.
+    locations: classpath:db/migration
+
+  modulith:
+    events:
+      # Re-deliver publications that never completed before the last shutdown
+      republish-outstanding-events-on-restart: true
+      # UPDATE (default) keeps completed rows forever; ARCHIVE moves them aside
+      completion-mode: ARCHIVE
+    runtime:
+      # Refuse to start when a module boundary is violated
+      verification-enabled: true
+      # Opt in to module-aware Flyway. Without this flag the migrations are not split
+      # per module and Flyway trips over four files that all call themselves V1.
+      flyway-enabled: true
+
+logging:
+  level:
+    com.example.bank: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank
+    username: bank
+    password: bank

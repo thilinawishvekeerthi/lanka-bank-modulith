@@ -1,0 +1,9 @@
+package com.example.bank.notifications.internal;
+
+import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface NotificationRepository extends JpaRepository<SentNotification, UUID> {
+
+    long countByPaymentId(UUID paymentId);
+}
